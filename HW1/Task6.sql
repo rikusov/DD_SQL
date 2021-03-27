@@ -11,6 +11,7 @@ SELECT
 FROM HumanResources.Employee HE1
 	INNER JOIN HumanResources.Employee HE2
 		ON ISNULL(HE1.OrganizationNode,hierarchyid::GetRoot()) = HE2.OrganizationNode.GetAncestor(1)
+			AND HE1.BirthDate>HE2.BirthDate AND HE1.HireDate>HE2.HireDate 
 	LEFT JOIN Person.Person AS PPD
 		ON HE1.BusinessEntityID = PPD.BusinessEntityID
 	LEFT JOIN Person.Person as PPE

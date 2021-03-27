@@ -7,6 +7,13 @@ CREATE PROCEDURE HowSingleMen(
 	@singlemen AS INT OUTPUT
 )
 AS
-SELECT @singlemen = Count(*)
-FROM HumanResources.Employee
-WHERE Gender = 'M' AND MaritalStatus = 'S' AND BirthDate BETWEEN @birthdates AND @birthdatepo
+BEGIN
+	SELECT @singlemen = COUNT(*)
+	FROM HumanResources.Employee	
+	WHERE Gender = 'M' AND MaritalStatus = 'S' AND BirthDate BETWEEN @birthdates AND @birthdatepo;
+
+	SELECT *
+	FROM HumanResources.Employee	
+	WHERE Gender = 'M' AND MaritalStatus = 'S' AND BirthDate BETWEEN @birthdates AND @birthdatepo;
+
+END
