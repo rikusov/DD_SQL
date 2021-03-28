@@ -54,7 +54,17 @@ CREATE TABLE OrderDetails( -- таблица для позиций в чеке
 	PriceForUnit MONEY NOT NULL, -- цена товара за единицу на момент покупки
 	TotalPrice AS Cast((CountProduct*PriceForUnit) AS MONEY) PERSISTED, -- итого по сточке чека
 
-)
+);
+
+CREATE TRIGGER PriceOrderDetails ON dbo.OrderDetails
+AFTER INSERT, DELETE, UPDATE AS 
+BEGIN
+	UPDATE dbo.OrderHeader 
+		SET dbo.OrderHeader.TotalPrice =
+			(SELECT SUM(OD.TotalPrice) FROM dbo.OrderDetails AS OD
+				WHERE OD.OrderID = dbo.OrderHeader.OrderID)
+		WHERE OrderHeader.OrderID IN (SELECT inserted.OrderID FROM inserted)  
+END;
 
 CREATE NONCLUSTERED INDEX IX_OrderDetails_Order
 	ON dbo.OrderDetails(OrderID);
