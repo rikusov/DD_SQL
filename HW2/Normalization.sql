@@ -7,15 +7,18 @@ CREATE TABLE Product( -- таблица для товаров
 	ProductUM VARCHAR(10), -- единица измерения товара (шт. кг.)
 	ProductPrice MONEY NOT NULL -- цена товара index
 );
+GO
 
 CREATE TABLE SAddress( -- таблица для адресов клиентов
 	AddressID INT IDENTITY(1,1) NOT NULL PRIMARY KEY, --id адреса
 	City VARCHAR(60) NOT NULL, --город
 	FullAddress VARCHAR(255) NOT NULL --полный адрес
 );
+GO
 
 CREATE NONCLUSTERED INDEX IX_SAddress_City
 	ON dbo.SAddress(City);
+GO
 
 CREATE TABLE Customer( --таблица клиентов
 	CustomerID INT IDENTITY(1,1) NOT NULL PRIMARY KEY, --id покупателя
@@ -25,12 +28,15 @@ CREATE TABLE Customer( --таблица клиентов
 		CONSTRAINT FK_Customer_Addres FOREIGN KEY
 		REFERENCES dbo.SAddress(AddressID) 
 );
+GO
 
 CREATE NONCLUSTERED INDEX IX_Customer_CustomerName
 	ON dbo.Customer(CustomerName);
+GO
 
 CREATE NONCLUSTERED INDEX IX_Customer_Adress
 	ON dbo.Customer(AddressID);
+GO
 
 CREATE TABLE OrderHeader( -- таблица для чеков
 	OrderID INT IDENTITY(1,1) NOT NULL PRIMARY KEY, -- id чека
@@ -41,9 +47,11 @@ CREATE TABLE OrderHeader( -- таблица для чеков
 		CONSTRAINT  DF_OrderHeader_TotalPrice
 		DEFAULT (0.00) NOT NULL
 );
+GO
 
 CREATE NONCLUSTERED INDEX IX_OrderHeader_Customer
 	ON dbo.OrderHeader(CustomerID);
+GO
 
 CREATE TABLE OrderDetails( -- таблица для позиций в чеке
 	OrderID INT NOT NULL -- id чека
@@ -58,6 +66,7 @@ CREATE TABLE OrderDetails( -- таблица для позиций в чеке
 	TotalPrice AS Cast((CountProduct*PriceForUnit) AS MONEY) PERSISTED, -- итого по сточке чека
 
 );
+GO
 
 CREATE TRIGGER PriceOrderDetails ON dbo.OrderDetails
 AFTER INSERT, DELETE, UPDATE AS 
@@ -69,9 +78,12 @@ BEGIN
 		WHERE OrderHeader.OrderID IN (SELECT inserted.OrderID FROM inserted)
 			OR OrderHeader.OrderID IN (SELECT deleted.OrderID From deleted)  
 END;
+GO
 
 CREATE NONCLUSTERED INDEX IX_OrderDetails_Order
 	ON dbo.OrderDetails(OrderID);
+GO
 
 CREATE NONCLUSTERED INDEX IX_OrderDetails_Product
 	ON dbo.OrderDetails(ProductID);
+GO
