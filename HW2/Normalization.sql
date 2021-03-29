@@ -10,9 +10,12 @@ CREATE TABLE Product( -- таблица для товаров
 
 CREATE TABLE SAddress( -- таблица для адресов клиентов
 	AddressID INT IDENTITY(1,1) NOT NULL PRIMARY KEY, --id адреса
-	City VARCHAR(60) NOT NULL UNIQUE, --город
+	City VARCHAR(60) NOT NULL, --город
 	FullAddress VARCHAR(255) NOT NULL --полный адрес
 );
+
+CREATE NONCLUSTERED INDEX IX_SAddress_City
+	ON dbo.SAddress(City);
 
 CREATE TABLE Customer( --таблица клиентов
 	CustomerID INT IDENTITY(1,1) NOT NULL PRIMARY KEY, --id покупателя
@@ -63,7 +66,8 @@ BEGIN
 		SET dbo.OrderHeader.TotalPrice =
 			(SELECT SUM(OD.TotalPrice) FROM dbo.OrderDetails AS OD
 				WHERE OD.OrderID = dbo.OrderHeader.OrderID)
-		WHERE OrderHeader.OrderID IN (SELECT inserted.OrderID FROM inserted)  
+		WHERE OrderHeader.OrderID IN (SELECT inserted.OrderID FROM inserted)
+			OR OrderHeader.OrderID IN (SELECT deleted.OrderID From deleted)  
 END;
 
 CREATE NONCLUSTERED INDEX IX_OrderDetails_Order
