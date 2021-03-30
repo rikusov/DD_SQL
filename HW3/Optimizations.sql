@@ -6,9 +6,6 @@ CREATE NONCLUSTERED INDEX IX_WebLog_SessionStart_ServerID
 GO
 --------------------------------------------------
 
-DROP INDEX IX_WebLog_SessionStart_ServerID
-	ON Marketing.WebLog;
-
 DECLARE @StartTime datetime2 = '2010-08-30 16:27';
 
 SELECT TOP(5000) wl.SessionID, wl.ServerID, wl.UserName 
