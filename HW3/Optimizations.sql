@@ -72,6 +72,7 @@ CREATE NONCLUSTERED INDEX IX_ProductModel_ProductModelID
 	ON Marketing.ProductModel(ProductModelID)
 		INCLUDE(ProductModel);
 GO
+
 -----------------------------------------------------
 
 SELECT
